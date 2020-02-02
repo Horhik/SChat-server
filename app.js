@@ -1,9 +1,29 @@
-const express = require("express");
-const app = express();
-const cf = require("./.config").cf;
-const port = cf.PORT;
-const index = require("./routes/index");
+require('dotenv').config();
+const app = require('express')();
+const socket = require('socket.io');
 
-app.use('/', index)
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+const env = process.env;
+const PORT = env.PORT;
+const cors = require('cors');
 
+app.use(cors());
+
+app.get('/', (req, res) => {
+  res.send('hello');
+});
+
+const server = app.listen(process.env.PORT, () =>
+  console.log(`App running on ${PORT}`),
+);
+
+const io = socket(server);
+
+io.on('connection', socket => {
+  console.log('one more added');
+
+  socket.on('message', text => {
+    console.log(text);
+    socket.broadcast.emit('messageRes', text);
+    socket.emit('messageRes', text);
+  });
+});
