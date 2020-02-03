@@ -22,8 +22,6 @@ io.on('connection', socket => {
   console.log('one more added');
 
   socket.on('message', text => {
-    console.log(text);
     socket.broadcast.emit('messageRes', text);
-    socket.emit('messageRes', text);
   });
 });
